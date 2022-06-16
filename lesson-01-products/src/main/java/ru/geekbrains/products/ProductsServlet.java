@@ -5,9 +5,10 @@ import ru.geekbrains.products.persist.ProductsRepository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,39 +27,31 @@ public class ProductsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         int status = 200;
-        PrintWriter writer = resp.getWriter();
-        writer.println("<!doctype html><html><body>");
         String pathInfo = req.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {
-            String productsTable = ProductsUtils.getProductsTable(productsRepository,
-                    req.getContextPath() + req.getServletPath());
-            writer.println(productsTable);
+            req.setAttribute("products", productsRepository.getAllProducts());
+            getServletContext().getRequestDispatcher("/products.jsp").forward(req, resp);
         } else {
-            status = printSingleProductInfo(writer, pathInfo);
+            PrintWriter writer = resp.getWriter();
+            Matcher matcher = PRODUCT_ID_PATTERN.matcher(pathInfo);
+            if (matcher.matches()) {
+                long productId = Long.parseLong(matcher.group(1));
+                Product product = productsRepository.getProductById(productId);
+                if (product == null) {
+                    status = 404;
+                    writer.println("Product with id " + productId + " was now found");
+                } else {
+                    req.setAttribute("product", product);
+                    getServletContext().getRequestDispatcher("/product_form.jsp").forward(req, resp);
+                }
+            } else {
+                status = 400;
+                writer.println("Bad id given: " + pathInfo.substring(1));
+            }
         }
-        writer.println("</body></html>");
         resp.setStatus(status);
     }
 
-    private int printSingleProductInfo(PrintWriter writer, String pathInfo) {
-        int status = 200;
-        Matcher matcher = PRODUCT_ID_PATTERN.matcher(pathInfo);
-        if (matcher.matches()) {
-            long productId = Long.parseLong(matcher.group(1));
-            Product product = productsRepository.getProductById(productId);
-            if (product == null) {
-                writer.println("<p><b>Product with id " + productId +
-                        " was not found.</b></p>");
-                status = 404;
-            } else {
-                writer.println(ProductsUtils.getProductTable(product));
-            }
-        } else {
-            writer.println("<p><b>Bad id given: " + pathInfo.substring(1) + "</b></p>");
-            status = 400;
-        }
-        return status;
-    }
 }
