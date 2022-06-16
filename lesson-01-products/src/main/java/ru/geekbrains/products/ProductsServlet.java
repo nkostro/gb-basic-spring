@@ -41,7 +41,7 @@ public class ProductsServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 resp.getWriter().println("<p><b>Wrong id given: " + pathInfo.substring(1) + "</b></p>");
-                resp.setStatus(404);
+                resp.setStatus(400);
             }
         }
         resp.getWriter().println("</body></html>");
