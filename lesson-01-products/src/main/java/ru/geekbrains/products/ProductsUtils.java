@@ -21,12 +21,14 @@ public class ProductsUtils {
         }
     }
 
-    public static String getProductsTable(ProductsRepository repository) {
+    public static String getProductsTable(ProductsRepository repository, String path) {
         StringBuilder sb = new StringBuilder("<table><tr><th>Id</th><th>Title</th><th>Cost</th></tr>");
         for (Product product : repository.getAllProducts()) {
-            sb.append(
-                    String.format("<tr><td>%d</td><td>%s</td><td>%s</td></tr>",
-                    product.getId(), product.getTitle(), product.getCost()));
+            long productId = product.getId();
+            sb.append(String.format("<tr><td><a href='" + path + "/%d'>%d</a>" +
+                        "</td><td>%s</td><td>%s</td></tr>",
+                        productId, productId,
+                        product.getTitle(), product.getCost()));
         }
         sb.append("</table>");
         return sb.toString();
