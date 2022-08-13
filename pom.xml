@@ -17,5 +17,6 @@
 
     <modules>
         <module>lesson-01-products</module>
+        <module>lesson-02-spring-basics</module>
     </modules>
 </project>
