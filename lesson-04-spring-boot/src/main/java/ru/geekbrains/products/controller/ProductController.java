@@ -2,13 +2,12 @@ package ru.geekbrains.products.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import ru.geekbrains.products.exceptions.EntityNotFoundException;
 import ru.geekbrains.products.persist.Product;
 import ru.geekbrains.products.persist.ProductsRepository;
 
@@ -30,7 +29,8 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public String listProduct(@PathVariable long id, Model model) {
-        model.addAttribute("product", productsRepository.findById(id));
+        model.addAttribute("product", productsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id %s is not found in repository", id))));
         return "product_form";
     }
 
@@ -42,7 +42,7 @@ public class ProductController {
         return "product_form";
     }
 
-    @GetMapping("/remove/{id}")
+    @DeleteMapping("{id}")
     public String removeProduct(@PathVariable long id) {
         productsRepository.remove(id);
         log.info("removed product with id=" + id);
@@ -50,11 +50,18 @@ public class ProductController {
     }
 
     @PostMapping
-    public String saveProduct(@Valid Product product, BindingResult bindingResult) {
+    public String saveProduct(@RequestBody @Valid Product product, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "product_form";
         }
         productsRepository.update(product);
         return "redirect:/products";
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String notFoundExceptionHandler(Model model, EntityNotFoundException e) {
+        model.addAttribute("message", e.getMessage());
+        return "not_found";
     }
 }

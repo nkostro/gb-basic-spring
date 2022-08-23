@@ -34,35 +34,7 @@
 
 <div class="container">
     <div class="row py-2">
-        <div class="col-12">
-            <a class="btn btn-primary" th:href="@{/products/add}">Add Product</a>
-        </div>
-
-        <div class="col-12">
-            <table class="table table-bordered my-2">
-                <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Cost</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="product : ${products}">
-                    <td scope="row" th:text="${product.id}">Enter id</td>
-                    <td th:text="${product.title}">Enter title</td>
-                    <td th:text="${product.cost}">0</td>
-                    <td>
-                        <a class="btn btn-success" th:href="@{/products/{id}(id = ${product.id})}"><i class="fas fa-edit"></i></a>
-                        <form class="d-inline" th:method="delete" th:action="@{/products/{id}(id=${product.id})}">
-                            <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        <p th:text="${message}">Error message</p>
     </div>
 </div>
 

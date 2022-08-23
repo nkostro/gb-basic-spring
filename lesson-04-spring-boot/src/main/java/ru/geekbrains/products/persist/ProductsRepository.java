@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -38,8 +39,8 @@ public class ProductsRepository {
         products.remove(id);
     }
 
-    public Product findById(long id) {
-        return products.get(id);
+    public Optional<Product> findById(long id) {
+        return Optional.ofNullable(products.get(id));
     }
 
     public List<Product> findAll() {
