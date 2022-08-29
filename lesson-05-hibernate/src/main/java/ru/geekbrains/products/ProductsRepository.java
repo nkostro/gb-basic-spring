@@ -33,7 +33,7 @@ public class ProductsRepository {
 
     public void saveOrUpdate(Product product) {
         executeInTransaction(entityManager -> {
-            if (product.getId() != null) {
+            if (product.getId() == null) {
                 entityManager.persist(product);
             } else {
                 entityManager.merge(product);
