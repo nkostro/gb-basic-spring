@@ -1,6 +1,5 @@
 package ru.geekbrains.products;
 
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.cfg.Configuration;
 import ru.geekbrains.products.model.Product;
@@ -12,13 +11,13 @@ public class Main {
         EntityManagerFactory entityManagerFactory = new Configuration()
                 .configure("hibernate.cfg.xml")
                 .buildSessionFactory();
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        ProductsRepository productsRepository = new ProductsRepository(entityManager);
-        productsRepository.insert(new Product("Bananas", BigDecimal.valueOf(90)));
-        productsRepository.insert(new Product("Apples", BigDecimal.valueOf(50)));
-        productsRepository.insert(new Product("Grape", BigDecimal.valueOf(80)));
-        productsRepository.insert(new Product("Melon", BigDecimal.valueOf(500)));
-        productsRepository.insert(new Product("Peaches", BigDecimal.valueOf(85)));
+
+        ProductsRepository productsRepository = new ProductsRepository(entityManagerFactory);
+        productsRepository.saveOrUpdate(new Product("Bananas", BigDecimal.valueOf(90)));
+        productsRepository.saveOrUpdate(new Product("Apples", BigDecimal.valueOf(50)));
+        productsRepository.saveOrUpdate(new Product("Grape", BigDecimal.valueOf(80)));
+        productsRepository.saveOrUpdate(new Product("Melon", BigDecimal.valueOf(500)));
+        productsRepository.saveOrUpdate(new Product("Peaches", BigDecimal.valueOf(85)));
         for (Product p : productsRepository.findAll()) {
             System.out.println(p);
         }
