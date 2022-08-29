@@ -26,14 +26,11 @@ public class ProductsRepository {
     }
 
     public void deleteById(long id) {
-        Product product = findById(id);
-        if (product != null) {
-            entityManager.getTransaction().begin();
-            entityManager.remove(product);
-            entityManager.getTransaction().commit();
-        } else {
-            throw new IllegalArgumentException("Product with id " + id + " was not found.");
-        }
+        entityManager.getTransaction().begin();
+        entityManager.createNamedQuery("Product.deleteById")
+                        .setParameter("id", id)
+                                .executeUpdate();
+        entityManager.getTransaction().commit();
     }
 
     public Product saveOrUpdate(Product product) {

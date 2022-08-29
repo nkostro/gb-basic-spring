@@ -5,6 +5,8 @@ import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.cfg.Configuration;
 import ru.geekbrains.products.model.Product;
 
+import java.math.BigDecimal;
+
 public class Main {
     public static void main(String[] args) {
         EntityManagerFactory entityManagerFactory = new Configuration()
@@ -12,11 +14,11 @@ public class Main {
                 .buildSessionFactory();
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         ProductsRepository productsRepository = new ProductsRepository(entityManager);
-        productsRepository.insert(new Product("Bananas", 90));
-        productsRepository.insert(new Product("Apples", 50));
-        productsRepository.insert(new Product("Grape", 80));
-        productsRepository.insert(new Product("Melon", 500));
-        productsRepository.insert(new Product("Peaches", 85));
+        productsRepository.insert(new Product("Bananas", BigDecimal.valueOf(90)));
+        productsRepository.insert(new Product("Apples", BigDecimal.valueOf(50)));
+        productsRepository.insert(new Product("Grape", BigDecimal.valueOf(80)));
+        productsRepository.insert(new Product("Melon", BigDecimal.valueOf(500)));
+        productsRepository.insert(new Product("Peaches", BigDecimal.valueOf(85)));
         for (Product p : productsRepository.findAll()) {
             System.out.println(p);
         }
@@ -27,7 +29,7 @@ public class Main {
         }
         System.out.println();
 
-        Product oranges = new Product("Oranges", 75);
+        Product oranges = new Product("Oranges", BigDecimal.valueOf(75));
         productsRepository.saveOrUpdate(oranges);
         for (Product p : productsRepository.findAll()) {
             System.out.println(p);
